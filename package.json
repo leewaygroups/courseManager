@@ -1,0 +1,31 @@
+{
+  "name": "demo_with_gulp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Prince O. Onyenike",
+  "license": "MIT",
+  "devDependencies": {
+    "browserify": "^11.0.1",
+    "gulp": "^3.9.1",
+    "gulp-connect": "^5.0.0",
+    "gulp-eslint": "^0.15.0",
+    "gulp-open": "^1.0.0",
+    "reactify": "^1.1.1",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "flux": "^2.1.1",
+    "gulp-concat": "^2.6.0",
+    "jquery": "^3.1.0",
+    "lodash": "^4.15.0",
+    "object-assign": "^4.1.0",
+    "react": "^0.13.3",
+    "react-router": "^0.13.3",
+    "toastr": "^2.1.0"
+  }
+}
