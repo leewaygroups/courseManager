@@ -18,6 +18,14 @@ var CourseActions = {
       actionType: ActionTypes.UPDATE_COURSE,
       course: course
     });
+  },
+
+   deleteCourse: function(id){
+    //notify stores about DELETE_COURSE action.
+    Dispatcher.dispatch({
+      actionType: ActionTypes.DELETE_COURSE,
+      id: id
+    });
   }
 };
 

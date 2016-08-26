@@ -50742,7 +50742,7 @@ var AuthorActions = {
 
 module.exports = AuthorActions;
 
-},{"../constants/actionTypes":222,"../dispatcher/appDispatcher":223}],205:[function(require,module,exports){
+},{"../constants/actionTypes":225,"../dispatcher/appDispatcher":226}],205:[function(require,module,exports){
 'use strict';
 
 var Dispatcher = require('../dispatcher/appDispatcher');
@@ -50751,7 +50751,6 @@ var ActionTypes = require('../constants/actionTypes');
 var CourseActions = {
   createCourse: function (course) {
     //notify stores about CREATE_COURSE action.
-    debugger;
     Dispatcher.dispatch({
       actionType: ActionTypes.CREATE_COURSE,
       course: course
@@ -50760,17 +50759,24 @@ var CourseActions = {
 
   updateCourse: function(course){
     //notify stores about UPDATE_COURSE action
-    debugger;
     Dispatcher.dispatch({
       actionType: ActionTypes.UPDATE_COURSE,
       course: course
+    });
+  },
+
+   deleteCourse: function(id){
+    //notify stores about DELETE_COURSE action.
+    Dispatcher.dispatch({
+      actionType: ActionTypes.DELETE_COURSE,
+      id: id
     });
   }
 };
 
 module.exports = CourseActions;
 
-},{"../constants/actionTypes":222,"../dispatcher/appDispatcher":223}],206:[function(require,module,exports){
+},{"../constants/actionTypes":225,"../dispatcher/appDispatcher":226}],206:[function(require,module,exports){
 'use strict';
 
 var Dispatcher = require('../dispatcher/appDispatcher');
@@ -50792,7 +50798,7 @@ var InitialiseActions = {
 
 module.exports = InitialiseActions;
 
-},{"../api/authorApi":207,"../constants/actionTypes":222,"../dispatcher/appDispatcher":223}],207:[function(require,module,exports){
+},{"../api/authorApi":207,"../constants/actionTypes":225,"../dispatcher/appDispatcher":226}],207:[function(require,module,exports){
 "use strict";
 
 //This file is mocking a web API by hitting hard coded data.
@@ -50867,6 +50873,105 @@ module.exports = {
 };
 
 },{}],209:[function(require,module,exports){
+"use strict";
+
+//This file is mocking a web API by hitting hard coded data.
+var courses = require('./courseData').courses;
+var _ = require('lodash');
+
+//This would be performed on the server in a real app. Just stubbing in.
+var _generateId = function(course) {
+	return course.title.replace(' ', '-');
+};
+
+var _clone = function(item) {
+	return JSON.parse(JSON.stringify(item)); //return cloned copy so that the item is passed by value instead of by reference
+};
+
+var CourseApi = {
+	getAllCourses: function() {
+		return _clone(courses);
+	},
+
+	getCoursesById: function(id) {
+		var course = _.find(courses, {id: id});
+		return _clone(course);
+	},
+
+	saveCourse: function(course) {
+		console.log('Imagine saving course via AJAX call...');
+
+		if (course.id) {
+			var existingCourseIndex = _.indexOf(courses, _.find(courses, {id: course.id}));
+			courses.splice(existingCourseIndex, 1, course);
+		} else {
+			//just simulating creation here. This data
+			//would be generated on the server in a real app.
+			course.id = _generateId(course);
+			courses.push(_clone(course));
+		}
+		return course;
+	},
+
+	deleteCourse: function(id) {
+		console.log('Imagine deleting course with id of ' + id + ' via AJAX call...');
+		_.remove(courses, { id: id});
+	}
+};
+
+module.exports = CourseApi;
+
+},{"./courseData":210,"lodash":6}],210:[function(require,module,exports){
+module.exports = {
+	courses: [
+		{
+			id: "clean-code",
+			title: "Clean Code: Writing Code for Humans",
+			watchHref: "http://www.pluralsight.com/courses/writing-clean-code-humans",
+			author: {
+				id: "cory-house",
+				name: "Cory House"
+			},
+			length: "3:10",
+			category: "Software Practices"
+		},
+		{
+			id: "architecture",
+			title: "Architecting Applications for the Real World",
+			watchHref: "http://www.pluralsight.com/courses/architecting-applications-dotnet",
+			author: {
+				id: "cory-house",
+				name: "Cory House"
+			},
+			length: "2:52",
+			category: "Software Architecture"
+		},
+		{
+			id: "career-reboot-for-developer-mind",
+			title: "Becoming an Outlier: Reprogramming the Developer Mind",
+			watchHref: "http://www.pluralsight.com/courses/career-reboot-for-developer-mind",
+			author: {
+				id: "cory-house",
+				name: "Cory House"
+			},
+			length: "2:30",
+			category: "Career"
+		},
+		{
+			id: "web-components-shadow-dom",
+			title: "Web Component Fundamentals",
+			watchHref: "http://www.pluralsight.com/courses/web-components-shadow-dom",
+			author: {
+				id: "cory-house",
+				name: "Cory House"
+			},
+			length: "5:10",
+			category: "HTML5"
+		}
+	]
+};
+
+},{}],211:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -50906,7 +51011,7 @@ var AboutPage = React.createClass({displayName: "AboutPage",
 
 module.exports = AboutPage;
 
-},{"react":202}],210:[function(require,module,exports){
+},{"react":202}],212:[function(require,module,exports){
 /* eslint-disable strict */
 
 var React = require('react');
@@ -50929,7 +51034,7 @@ var Header = require('./common/header.react');
 
 module.exports = App;
 
-},{"./common/header.react":215,"jquery":5,"react":202,"react-router":33}],211:[function(require,module,exports){
+},{"./common/header.react":217,"jquery":5,"react":202,"react-router":33}],213:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -50968,7 +51073,7 @@ var AuthorForm = React.createClass({displayName: "AuthorForm",
 
 module.exports = AuthorForm;
 
-},{"../common/input.react":216,"react":202}],212:[function(require,module,exports){
+},{"../common/input.react":218,"react":202}],214:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -51018,6 +51123,7 @@ var AuthorList = React.createClass({displayName: "AuthorList",
       React.createElement("div", null, 
         React.createElement("table", {className: "table"}, 
           React.createElement("thead", null, 
+            React.createElement("th", null), 
             React.createElement("th", null, "ID"), 
             React.createElement("th", null, "Name")
           ), 
@@ -51032,7 +51138,7 @@ var AuthorList = React.createClass({displayName: "AuthorList",
 
 module.exports = AuthorList;
 
-},{"../../actions/AuthorActions":204,"../../stores/authorStore":226,"react":202,"react-router":33,"toastr":203}],213:[function(require,module,exports){
+},{"../../actions/AuthorActions":204,"../../stores/authorStore":229,"react":202,"react-router":33,"toastr":203}],215:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -51064,7 +51170,7 @@ var AuthorsPage = React.createClass({displayName: "AuthorsPage",
 
 module.exports = AuthorsPage;
 
-},{"../../actions/AuthorActions":204,"../../stores/authorStore":226,"./authorList.react":212,"react":202,"react-router":33}],214:[function(require,module,exports){
+},{"../../actions/AuthorActions":204,"../../stores/authorStore":229,"./authorList.react":214,"react":202,"react-router":33}],216:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -51168,7 +51274,7 @@ var AddAuthor = React.createClass({displayName: "AddAuthor",
 
 module.exports = AddAuthor;
 
-},{"../../actions/AuthorActions":204,"../../stores/authorStore":226,"./AuthorForm.react":211,"react":202,"react-router":33,"toastr":203}],215:[function(require,module,exports){
+},{"../../actions/AuthorActions":204,"../../stores/authorStore":229,"./AuthorForm.react":213,"react":202,"react-router":33,"toastr":203}],217:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -51197,7 +51303,7 @@ var Header = React.createClass({displayName: "Header",
 
 module.exports = Header;
 
-},{"react":202,"react-router":33}],216:[function(require,module,exports){
+},{"react":202,"react-router":33}],218:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -51237,7 +51343,7 @@ var Input = React.createClass({displayName: "Input",
 
 module.exports = Input;
 
-},{"react":202}],217:[function(require,module,exports){
+},{"react":202}],219:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -51265,7 +51371,7 @@ var CourseForm = React.createClass({displayName: "CourseForm",
           name: "author", 
           label: "Author", 
           onChange: this.props.onChange, 
-          value: this.props.course.author, 
+          value: this.props.course.author.name, 
           error: this.props.errors.author}), 
 
         React.createElement(Input, {
@@ -51290,19 +51396,103 @@ var CourseForm = React.createClass({displayName: "CourseForm",
 
 module.exports = CourseForm;
 
-},{"../common/input.react":216,"react":202}],218:[function(require,module,exports){
+},{"../common/input.react":218,"react":202}],220:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
 var Router = require('react-router');
 var Link = Router.Link;
+var toastr = require('toastr');
+var CourseActions = require('../../actions/courseActions');
+var CourseStore = require('../../stores/courseStore');
+
+var CourseList = React.createClass({displayName: "CourseList",
+  propTypes: {
+    courses: React.PropTypes.array.isRequired
+  },
+
+  _onChange: function(){
+    this.setState({
+      courses: CourseStore.getAllCourses()
+    });
+  },
+
+  componentWillMount: function(){
+    CourseStore.addChangeListener(this._onChange);
+  },
+
+  componentWillUnmount: function(){
+    CourseStore.removeChangeListener(this._onChange);
+  },
+
+  deleteCourse: function(id, event){
+    event.preventDefault();
+    CourseActions.deleteCourse(id);
+    toastr.success('Course deleted.');
+  },
+
+  watchCourse: function(course, event){
+    //play course video
+  },
+
+  render: function () {
+    var createCourseRow = function (course) {
+      return (
+        React.createElement("tr", {key: course.id}, 
+          React.createElement("td", null, React.createElement("a", {href: "#", className: "btn btn-danger", onClick: this.deleteCourse.bind(this, course.id)}, "Delete")), 
+          React.createElement("td", null, React.createElement("a", {href: "#", className: "btn btn-success", onClick: this.watchCourse.bind(this, course)}, "Watch")), 
+          React.createElement("td", null, React.createElement(Link, {to: "manageCourse", params: { id: course.id}}, course.title)), 
+          React.createElement("td", null, course.author.name), 
+          React.createElement("td", null, course.category), 
+          React.createElement("td", null, course.length)
+        )
+      );
+    };
+
+    return (
+      React.createElement("div", null, 
+        React.createElement("table", {className: "table"}, 
+          React.createElement("thead", null, 
+            React.createElement("th", null), 
+            React.createElement("th", null), 
+            React.createElement("th", null, "Title"), 
+            React.createElement("th", null, "Author"), 
+            React.createElement("th", null, "Category"), 
+            React.createElement("th", null, "Duration")
+          ), 
+          React.createElement("tbody", null, 
+            this.props.courses.map(createCourseRow, this) 
+          )
+        )
+      )
+    );
+  }
+});
+
+module.exports = CourseList;
+
+},{"../../actions/courseActions":205,"../../stores/courseStore":230,"react":202,"react-router":33,"toastr":203}],221:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var Router = require('react-router');
+var Link = Router.Link;
+var CourseStore = require('../../stores/courseStore');
+var CourseList = require('./courseList.react');
 
 var CoursesPage = React.createClass({displayName: "CoursesPage",
+  getInitialState: function(){
+    return {
+       courses: CourseStore.getAllCourses()
+    };
+  },
+
   render: function () {
     return (
       React.createElement("div", null, 
         React.createElement("h1", null, " Courses"), 
-        React.createElement(Link, {to: "addCourse", className: "btn btn-primary"}, " Add Course")
+        React.createElement(Link, {to: "addCourse", className: "btn btn-primary"}, " Add Course"), 
+        React.createElement(CourseList, {courses: this.state.courses})
       )
     );
   }
@@ -51310,14 +51500,16 @@ var CoursesPage = React.createClass({displayName: "CoursesPage",
 
 module.exports = CoursesPage;
 
-},{"react":202,"react-router":33}],219:[function(require,module,exports){
+},{"../../stores/courseStore":230,"./courseList.react":220,"react":202,"react-router":33}],222:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
 var CourseForm = require('./courseForm.react');
 var Router = require('react-router');
-var toastr  = require('toastr');
+var toastr = require('toastr');
+var _ = require('lodash');
 var CourseAction = require('../../actions/courseActions');
+var CourseStore = require('../../stores/courseStore');
 
 var AddAcoursePage = React.createClass({displayName: "AddAcoursePage",
 
@@ -51331,7 +51523,7 @@ var AddAcoursePage = React.createClass({displayName: "AddAcoursePage",
       formIsValid = false;
     }
 
-    if (this.state.course.author.trim().length < 3) {
+    if (this.state.course.author.name.trim().length < 3) {
       this.state.errors.author = "Course must have at least one author.";
       this.setState({ errors: this.state.errors });
       formIsValid = false;
@@ -51360,25 +51552,45 @@ var AddAcoursePage = React.createClass({displayName: "AddAcoursePage",
 
     this.setState({dirty: false});
     toastr.success('Course saved');
-    this.transitionTo('addCourse')
+    this.transitionTo('courses');
   },
 
   onChange: function(event){
     this.setState({ dirty: true });
     var field = event.target.name;
-    this.state.course[field] = event.target.value;
+
+    if(field === "author" ){
+      this.state.course[field].name = event.target.value;
+    }else{
+       this.state.course[field] = event.target.value;
+    }
   },
 
   getInitialState: function(){
     return {
-      course: {title: "", author: "", category: "", length: ""},
+      course: {title: "", author: {name: ""}, category: "", length: ""},
       errors: {},
       dirty: false
     };
   },
 
+  componentWillMount: function(){
+    var courseId = this.props.params.id;
+    if(courseId){
+      var existingCourse = _.find(CourseStore.getAllCourses(), function(course){
+        return course.id === courseId;
+      });
+
+      if(existingCourse){
+        this.setState({
+          course: existingCourse
+        });
+      }
+    }
+  },
+
   mixins: [
-    Router.Navigations
+    Router.Navigation
   ],
 
   render: function () {
@@ -51397,7 +51609,7 @@ var AddAcoursePage = React.createClass({displayName: "AddAcoursePage",
 
 module.exports = AddAcoursePage;
 
-},{"../../actions/courseActions":205,"./courseForm.react":217,"react":202,"react-router":33,"toastr":203}],220:[function(require,module,exports){
+},{"../../actions/courseActions":205,"../../stores/courseStore":230,"./courseForm.react":219,"lodash":6,"react":202,"react-router":33,"toastr":203}],223:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -51418,7 +51630,7 @@ var HomePage = React.createClass({displayName: "HomePage",
 
 module.exports = HomePage;
 
-},{"react":202,"react-router":33}],221:[function(require,module,exports){
+},{"react":202,"react-router":33}],224:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -51439,7 +51651,7 @@ var NotFoundPage = React.createClass({displayName: "NotFoundPage",
 
 module.exports = NotFoundPage;
 
-},{"react":202,"react-router":33}],222:[function(require,module,exports){
+},{"react":202,"react-router":33}],225:[function(require,module,exports){
 'use strict';
 var keyMirror = require('react/lib/keyMirror');
 
@@ -51452,14 +51664,14 @@ module.exports = keyMirror({
   UPDATE_COURSE: null
 });
 
-},{"react/lib/keyMirror":187}],223:[function(require,module,exports){
+},{"react/lib/keyMirror":187}],226:[function(require,module,exports){
 'use strict';
 
 var Dispatcher = require('flux').Dispatcher;
 
 module.exports = new Dispatcher();
 
-},{"flux":3}],224:[function(require,module,exports){
+},{"flux":3}],227:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -51474,7 +51686,7 @@ Router.run(routes, function (Handler) {
   React.render(React.createElement(Handler, null), document.getElementById('app'));
 });
 
-},{"./actions/initialiseActions":206,"./routes":225,"react":202,"react-router":33}],225:[function(require,module,exports){
+},{"./actions/initialiseActions":206,"./routes":228,"react":202,"react-router":33}],228:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -51495,11 +51707,12 @@ module.exports = (
     React.createElement(Route, {name: "manageAuthor", path: "author/:id", handler: require('./components/authors/manageAuthorPage.react')}), 
     React.createElement(Route, {name: "courses", handler: require('./components/courses/coursesPage.react')}), 
     React.createElement(Route, {name: "addCourse", handler: require('./components/courses/manageCoursePage.react')}), 
+    React.createElement(Route, {name: "manageCourse", path: "course/:id", handler: require('./components/courses/manageCoursePage.react')}), 
     React.createElement(Route, {name: "about", handler: require('./components/about/aboutPage.react')})
   )
 );
 
-},{"./components/about/aboutPage.react":209,"./components/app":210,"./components/authors/authorsPage.react":213,"./components/authors/manageAuthorPage.react":214,"./components/courses/coursesPage.react":218,"./components/courses/manageCoursePage.react":219,"./components/homePage.react":220,"./components/notFound.react":221,"react":202,"react-router":33}],226:[function(require,module,exports){
+},{"./components/about/aboutPage.react":211,"./components/app":212,"./components/authors/authorsPage.react":215,"./components/authors/manageAuthorPage.react":216,"./components/courses/coursesPage.react":221,"./components/courses/manageCoursePage.react":222,"./components/homePage.react":223,"./components/notFound.react":224,"react":202,"react-router":33}],229:[function(require,module,exports){
 'use strict';
 
 var Dispatcher = require('../dispatcher/appDispatcher');
@@ -51576,4 +51789,83 @@ Dispatcher.register(function (action) {
 
 module.exports = AuthorStore;
 
-},{"../api/authorApi":207,"../constants/ActionTypes":222,"../dispatcher/appDispatcher":223,"events":1,"lodash":6,"object-assign":7}]},{},[224]);
+},{"../api/authorApi":207,"../constants/ActionTypes":225,"../dispatcher/appDispatcher":226,"events":1,"lodash":6,"object-assign":7}],230:[function(require,module,exports){
+'use strict';
+
+var Emitter = require('events').EventEmitter;
+var assign = require('object-assign');
+var _ = require('lodash');
+var Dispatcher = require('../dispatcher/appDispatcher');
+var ActionTypes = require('../constants/actionTypes');
+var CourseApi = require('../api/courseApi');
+
+var CHANGE_EVENT = 'CHANGE_EVENT';
+var _courses = [];
+
+var CourseStore = assign({}, Emitter.prototype, {
+  addChangeListener: function(listener){
+    this.on(CHANGE_EVENT, listener);
+  },
+
+  removeChangeListener: function(listener){
+    this.removeListener(CHANGE_EVENT, listener);
+  },
+
+  emitChange: function () {
+    this.emit(CHANGE_EVENT);
+  },
+
+  getAllCourses: function(){
+    return _courses;
+  },
+
+  getCourseById: function(id){
+    return _.find(_courses, function(course){
+      return course.id === id;
+    });
+  }
+
+});
+
+Dispatcher.register(function (action) {
+  switch (action.actionType) {
+    case ActionTypes.INITIALISE_APP:
+     _courses = CourseApi.getAllCourses();
+     CourseStore.emitChange();
+     break;
+
+    case ActionTypes.CREATE_COURSE:
+      CourseApi.saveCourse(action.course);
+      _courses.push(action.course);
+      CourseStore.emitChange();
+      break;
+
+    case ActionTypes.UPDATE_COURSE:
+      CourseApi.saveCourse(action.course);
+
+      _courses.splice(_.findIndex(_courses, function(element){
+        return element.id === action.course.id;
+      }), 1);
+
+      _courses.push(action.course);
+      CourseStore.emitChange();
+      break;
+
+    case ActionTypes.DELETE_COURSE:
+      CourseApi.deleteCourse(action.id);
+
+      _courses.splice(_.findIndex(_courses, function(element){
+        return element.id === action.id;
+      }), 1);
+
+      CourseStore.emitChange();
+      break;
+
+    default:
+      break;
+  }
+});
+
+module.exports = CourseStore;
+
+},{"../api/courseApi":209,"../constants/actionTypes":225,"../dispatcher/appDispatcher":226,"events":1,"lodash":6,"object-assign":7}]},{},[227]);

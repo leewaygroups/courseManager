@@ -3,8 +3,10 @@
 var React = require('react');
 var CourseForm = require('./courseForm.react');
 var Router = require('react-router');
-var toastr  = require('toastr');
+var toastr = require('toastr');
+var _ = require('lodash');
 var CourseAction = require('../../actions/courseActions');
+var CourseStore = require('../../stores/courseStore');
 
 var AddAcoursePage = React.createClass({
 
@@ -18,7 +20,7 @@ var AddAcoursePage = React.createClass({
       formIsValid = false;
     }
 
-    if (this.state.course.author.trim().length < 3) {
+    if (this.state.course.author.name.trim().length < 3) {
       this.state.errors.author = "Course must have at least one author.";
       this.setState({ errors: this.state.errors });
       formIsValid = false;
@@ -47,25 +49,45 @@ var AddAcoursePage = React.createClass({
 
     this.setState({dirty: false});
     toastr.success('Course saved');
-    this.transitionTo('addCourse')
+    this.transitionTo('courses');
   },
 
   onChange: function(event){
     this.setState({ dirty: true });
     var field = event.target.name;
-    this.state.course[field] = event.target.value;
+
+    if(field === "author" ){
+      this.state.course[field].name = event.target.value;
+    }else{
+       this.state.course[field] = event.target.value;
+    }
   },
 
   getInitialState: function(){
     return {
-      course: {title: "", author: "", category: "", length: ""},
+      course: {title: "", author: {name: ""}, category: "", length: ""},
       errors: {},
       dirty: false
     };
   },
 
+  componentWillMount: function(){
+    var courseId = this.props.params.id;
+    if(courseId){
+      var existingCourse = _.find(CourseStore.getAllCourses(), function(course){
+        return course.id === courseId;
+      });
+
+      if(existingCourse){
+        this.setState({
+          course: existingCourse
+        });
+      }
+    }
+  },
+
   mixins: [
-    Router.Navigations
+    Router.Navigation
   ],
 
   render: function () {

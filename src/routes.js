@@ -18,6 +18,7 @@ module.exports = (
     <Route name="manageAuthor" path="author/:id" handler={require('./components/authors/manageAuthorPage.react')} />
     <Route name="courses" handler={require('./components/courses/coursesPage.react')} />
     <Route name="addCourse" handler={require('./components/courses/manageCoursePage.react')} />
+    <Route name="manageCourse" path="course/:id" handler={require('./components/courses/manageCoursePage.react')} />
     <Route name="about" handler={require('./components/about/aboutPage.react')} />
   </Route>
 );

@@ -25,7 +25,7 @@ var CourseForm = React.createClass({
           name="author"
           label="Author"
           onChange={this.props.onChange}
-          value={this.props.course.author}
+          value={this.props.course.author.name}
           error={this.props.errors.author} />
 
         <Input
