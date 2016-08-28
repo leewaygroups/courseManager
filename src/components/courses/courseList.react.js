@@ -6,6 +6,7 @@ var Link = Router.Link;
 var toastr = require('toastr');
 var CourseActions = require('../../actions/courseActions');
 var CourseStore = require('../../stores/courseStore');
+var Modal = require('../common/modal.react');
 
 var CourseList = React.createClass({
   propTypes: {
@@ -43,6 +44,7 @@ var CourseList = React.createClass({
       return (
         <tr key={course.id}>
           <td><a href="#" className="btn btn-danger" onClick={this.deleteCourse.bind(this, course.id)} >Delete</a></td>
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg">Large modal</button>
           <td><a href="#" className="btn btn-success" onClick={this.watchCourse.bind(this, course)} >Watch</a></td>
           <td><Link to="manageCourse" params={{ id: course.id }}>{course.title}</Link></td>
           <td>{course.author.name}</td>

@@ -61,7 +61,6 @@ var AddAcoursePage = React.createClass({
 
   onCourseAuthorChange: function () {
     this.setState({ dirty: true });
-    debugger;
     var option = _.find(event.target.options, function(element){
       return element.value === event.target.value;
     });
