@@ -9,7 +9,6 @@ var AuthorList = require('./authorList.react');
 
 var AuthorsPage = React.createClass({
   getInitialState: function () {
-    console.log(AuthorStore.getAllAuthors());
     return {
       authors: AuthorStore.getAllAuthors()
     };

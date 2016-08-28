@@ -34,6 +34,8 @@ var CourseList = React.createClass({
 
   watchCourse: function(course, event){
     //play course video
+    event.preventDefault();
+    console.log("To be implemented");
   },
 
   render: function () {

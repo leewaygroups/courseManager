@@ -7,10 +7,11 @@ var toastr = require('toastr');
 var _ = require('lodash');
 var CourseAction = require('../../actions/courseActions');
 var CourseStore = require('../../stores/courseStore');
+var AuthorStore = require('../../stores/authorStore');
 
 var AddAcoursePage = React.createClass({
 
-  isFormValid: function(){
+  isFormValid: function () {
     var formIsValid = true;
     this.state.errors = {};
 
@@ -35,52 +36,71 @@ var AddAcoursePage = React.createClass({
     return formIsValid;
   },
 
-  saveCourse: function(event){
+  saveCourse: function (event) {
     event.preventDefault();
-    if(!this.isFormValid()){
+    if (!this.isFormValid()) {
       return;
     }
 
-    if(this.state.course.id){
+    if (this.state.course.id) {
       CourseAction.updateCourse(this.state.course);
-    }else{
+    } else {
       CourseAction.createCourse(this.state.course);
     }
 
-    this.setState({dirty: false});
+    this.setState({ dirty: false });
     toastr.success('Course saved');
     this.transitionTo('courses');
   },
 
-  onChange: function(event){
+  onChange: function (event) {
     this.setState({ dirty: true });
     var field = event.target.name;
-
-    if(field === "author" ){
-      this.state.course[field].name = event.target.value;
-    }else{
-       this.state.course[field] = event.target.value;
-    }
+    this.state.course[field] = event.target.value;
   },
 
-  getInitialState: function(){
+  onCourseAuthorChange: function () {
+    this.setState({ dirty: true });
+    debugger;
+    var option = _.find(event.target.options, function(element){
+      return element.value === event.target.value;
+    });
+
+    this.state.course.author = {
+      id: option.id,
+      name: event.target.value
+    };
+  },
+
+  deriveAuthorName: function(){
+    return AuthorStore.getAllAuthors().map(function(author){
+      author.name = author.firstName + " " + author.lastName;
+      return author;
+    });
+  },
+
+  getInitialState: function () {
     return {
-      course: {title: "", author: {name: ""}, category: "", length: ""},
+      course: { title: "", author: { id: 0, name: "" }, category: "", length: "" },
+      authors: this.deriveAuthorName(),
       errors: {},
+      selectedCourseAuthor: "",
       dirty: false
     };
   },
 
-  componentWillMount: function(){
+  componentWillMount: function () {
     var courseId = this.props.params.id;
-    if(courseId){
-      var existingCourse = _.find(CourseStore.getAllCourses(), function(course){
+    if (courseId) {
+      var existingCourse = _.find(CourseStore.getAllCourses(), function (course) {
         return course.id === courseId;
       });
 
-      if(existingCourse){
+      if (existingCourse) {
+
         this.setState({
-          course: existingCourse
+          course: existingCourse,
+          selectedCourseAuthor: existingCourse.author.name
         });
       }
     }
@@ -96,9 +116,11 @@ var AddAcoursePage = React.createClass({
         <h1>Manage course</h1>
         <CourseForm
           course={this.state.course}
+          authors={this.state.authors}
           errors={this.state.errors}
           onSave={this.saveCourse}
-          onChange={this.onChange}/>
+          onChange={this.onChange}
+          courseAuthorChange={this.onCourseAuthorChange} />
       </div>
     );
   }
