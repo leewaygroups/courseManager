@@ -8,7 +8,7 @@ var Selection = React.createClass({
         label: React.PropTypes.string.isRequired,
         authors: React.PropTypes.array.isRequired,
         onChange: React.PropTypes.func.isRequired,
-        value: React.PropTypes.string
+        selectedValue: React.PropTypes.object.isRequired
     },
 
     addOptions: function(author){
@@ -25,9 +25,10 @@ var Selection = React.createClass({
             <div className="field">
               <select className="form-control"
                 name={this.props.name}
+                id={this.props.selectedValue.id}
                 ref={this.props.name}
                 onChange={this.props.onChange}
-                value={this.props.value}>
+                value={this.props.selectedValue.name}>
                 {this.props.authors.map(this.addOptions, this)}
               </select>
             </div>
@@ -37,60 +38,3 @@ var Selection = React.createClass({
 });
 
 module.exports = Selection;
-
-
-
-/*<Selection name="author"
-  label= "Author"
-  name="coursAuthor"
-  authors={this.state.authors}
-  onChange={this.state.changeHandler}
-  value={this.state.selectedValue}/>
-*/
-
-/*var Selection = React.createClass({
-  render: function () {
-    return (
-      <div className={wrapperClass}>
-        <label htmlFor={this.props.name}>{this.props.label}</label>
-        <div className="field">
-          <select className="form-control"
-              name={this.props.name}
-              ref={this.props.name}
-              onChange={this.props.onChange}
-              value={this.props.value}>
-            </select>
-            <div className="input">{this.props.error}</div>
-        </div>
-      </div>
-    );
-  }
-});*/
-
-
-//
-/*var MyParent = React.createClass({
-    getInitialState: function() {
-        return {
-            childSelectValue: undefined
-        }
-    },
-
-    changeHandler: function(e) {
-        this.setState({
-            childSelectValue: e.target.value
-        })
-    },
-    render: function() {
-        return (
-            <div>
-                <Selection
-                    authors={this.state.authors}
-                    value={this.state.childSelectValue}
-                    onChange={this.changeHandler}
-                />
-            </div>
-        )
-    }
-});*/
-

@@ -11,7 +11,7 @@ var CourseForm = React.createClass({
     onChange: React.PropTypes.func.isRequired,
     onSave: React.PropTypes.func.isRequired,
     courseAuthorChange: React.PropTypes.func.isRequired,
-    selectedCourseAuthor: React.PropTypes.object.isRequired,
+    selectedValue: React.PropTypes.object.isRequired,
     errors: React.PropTypes.object
   },
 
@@ -30,7 +30,7 @@ var CourseForm = React.createClass({
           name="coursAuthor"
           authors={this.props.authors}
           onChange={this.props.courseAuthorChange}
-          value={this.props.selectedCourseAuthor} />
+          selectedValue={this.props.selectedValue} />
 
         <Input
           name="category"

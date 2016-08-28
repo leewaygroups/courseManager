@@ -51353,7 +51353,7 @@ var Selection = React.createClass({displayName: "Selection",
         label: React.PropTypes.string.isRequired,
         authors: React.PropTypes.array.isRequired,
         onChange: React.PropTypes.func.isRequired,
-        value: React.PropTypes.string
+        selectedValue: React.PropTypes.object.isRequired
     },
 
     addOptions: function(author){
@@ -51370,9 +51370,10 @@ var Selection = React.createClass({displayName: "Selection",
             React.createElement("div", {className: "field"}, 
               React.createElement("select", {className: "form-control", 
                 name: this.props.name, 
+                id: this.props.selectedValue.id, 
                 ref: this.props.name, 
                 onChange: this.props.onChange, 
-                value: this.props.value}, 
+                value: this.props.selectedValue.name}, 
                 this.props.authors.map(this.addOptions, this)
               )
             )
@@ -51382,62 +51383,6 @@ var Selection = React.createClass({displayName: "Selection",
 });
 
 module.exports = Selection;
-
-
-
-/*<Selection name="author"
-  label= "Author"
-  name="coursAuthor"
-  authors={this.state.authors}
-  onChange={this.state.changeHandler}
-  value={this.state.selectedValue}/>
-*/
-
-/*var Selection = React.createClass({
-  render: function () {
-    return (
-      <div className={wrapperClass}>
-        <label htmlFor={this.props.name}>{this.props.label}</label>
-        <div className="field">
-          <select className="form-control"
-              name={this.props.name}
-              ref={this.props.name}
-              onChange={this.props.onChange}
-              value={this.props.value}>
-            </select>
-            <div className="input">{this.props.error}</div>
-        </div>
-      </div>
-    );
-  }
-});*/
-
-
-//
-/*var MyParent = React.createClass({
-    getInitialState: function() {
-        return {
-            childSelectValue: undefined
-        }
-    },
-
-    changeHandler: function(e) {
-        this.setState({
-            childSelectValue: e.target.value
-        })
-    },
-    render: function() {
-        return (
-            <div>
-                <Selection
-                    authors={this.state.authors}
-                    value={this.state.childSelectValue}
-                    onChange={this.changeHandler}
-                />
-            </div>
-        )
-    }
-});*/
 
 },{"react":202}],220:[function(require,module,exports){
 'use strict';
@@ -51453,7 +51398,7 @@ var CourseForm = React.createClass({displayName: "CourseForm",
     onChange: React.PropTypes.func.isRequired,
     onSave: React.PropTypes.func.isRequired,
     courseAuthorChange: React.PropTypes.func.isRequired,
-    selectedCourseAuthor: React.PropTypes.object.isRequired,
+    selectedValue: React.PropTypes.object.isRequired,
     errors: React.PropTypes.object
   },
 
@@ -51472,7 +51417,7 @@ var CourseForm = React.createClass({displayName: "CourseForm",
           name: "coursAuthor", 
           authors: this.props.authors, 
           onChange: this.props.courseAuthorChange, 
-          value: this.props.selectedCourseAuthor}), 
+          selectedValue: this.props.selectedValue}), 
 
         React.createElement(Input, {
           name: "category", 
@@ -51675,6 +51620,11 @@ var AddAcoursePage = React.createClass({displayName: "AddAcoursePage",
       id: option.id,
       name: event.target.value
     };
+
+    this.setState({
+      course: this.state.course,
+      selectedCourseAuthor: {id: option.id, name: event.target.value}
+    });
   },
 
   deriveAuthorName: function(){
@@ -51689,7 +51639,7 @@ var AddAcoursePage = React.createClass({displayName: "AddAcoursePage",
       course: { title: "", author: { id: 0, name: "" }, category: "", length: "" },
       authors: this.deriveAuthorName(),
       errors: {},
-      selectedCourseAuthor: "",
+      selectedCourseAuthor: {id: 0, name: ""},
       dirty: false
     };
   },
@@ -51702,10 +51652,9 @@ var AddAcoursePage = React.createClass({displayName: "AddAcoursePage",
       });
 
       if (existingCourse) {
-
         this.setState({
           course: existingCourse,
-          selectedCourseAuthor: existingCourse.author.name
+          selectedCourseAuthor: existingCourse.author
         });
       }
     }
@@ -51722,6 +51671,7 @@ var AddAcoursePage = React.createClass({displayName: "AddAcoursePage",
         React.createElement(CourseForm, {
           course: this.state.course, 
           authors: this.state.authors, 
+          selectedValue: this.state.selectedCourseAuthor, 
           errors: this.state.errors, 
           onSave: this.saveCourse, 
           onChange: this.onChange, 

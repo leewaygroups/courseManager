@@ -70,6 +70,11 @@ var AddAcoursePage = React.createClass({
       id: option.id,
       name: event.target.value
     };
+
+    this.setState({
+      course: this.state.course,
+      selectedCourseAuthor: {id: option.id, name: event.target.value}
+    });
   },
 
   deriveAuthorName: function(){
@@ -84,7 +89,7 @@ var AddAcoursePage = React.createClass({
       course: { title: "", author: { id: 0, name: "" }, category: "", length: "" },
       authors: this.deriveAuthorName(),
       errors: {},
-      selectedCourseAuthor: "",
+      selectedCourseAuthor: {id: 0, name: ""},
       dirty: false
     };
   },
@@ -97,10 +102,9 @@ var AddAcoursePage = React.createClass({
       });
 
       if (existingCourse) {
-
         this.setState({
           course: existingCourse,
-          selectedCourseAuthor: existingCourse.author.name
+          selectedCourseAuthor: existingCourse.author
         });
       }
     }
@@ -117,6 +121,7 @@ var AddAcoursePage = React.createClass({
         <CourseForm
           course={this.state.course}
           authors={this.state.authors}
+          selectedValue= {this.state.selectedCourseAuthor}
           errors={this.state.errors}
           onSave={this.saveCourse}
           onChange={this.onChange}
