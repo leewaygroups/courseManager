@@ -51348,75 +51348,13 @@ module.exports = Input;
 var React = require('react');
 
 var Modal = React.createClass({displayName: "Modal",
-   close: function(event) {
-      event.preventDefault();
-      if (this.props.onClose) {
-        this.props.onClose();
-      }
-    },
+  render: function () {
+    return (
+      React.createElement("div", {className: "modal fade", id: "myModal", tabindex: "-1", role: "dialog", "aria-labelledby": "myModalLabel", "aria-hidden": "true"}
 
-    render: function() {
-      if (this.props.isOpen === false){
-          return null;
-      }
-
-      var modalStyle = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        zIndex: '9999',
-        background: '#fff'
-      };
-
-       if (this.props.width && this.props.height) {
-        modalStyle.width = this.props.width + 'px';
-        modalStyle.height = this.props.height + 'px';
-        modalStyle.marginLeft = '-' + (this.props.width / 2) + 'px';
-        modalStyle.marginTop = '-' + (this.props.height / 2) + 'px';
-        modalStyle.transform = null;
-      }
-
-      if (this.props.style) {
-        for (var key in this.props.style) {
-          modalStyle[key] = this.props.style[key];
-        }
-      }
-
-       var backdropStyle = {
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        top: '0px',
-        left: '0px',
-        zIndex: '9998',
-        background: 'rgba(0, 0, 0, 0.3)'
-      };
-
-       if (this.props.backdropStyle) {
-        for (var prop in this.props.backdropStyle) {
-          backdropStyle[prop] = this.props.backdropStyle[prop];
-        }
-      }
-
-      var backdrop = {};
-       if(!this.props.noBackdrop){
-           backdrop = (
-              React.createElement("div", {className: this.props.backdropClassName, style: backdropStyle, 
-                    onClick: this.close}
-              )
-            );
-        }
-
-      return (
-         React.createElement("div", {className: this.props.containerClassName}, 
-          React.createElement("div", {className: this.props.className, style: modalStyle}, 
-            this.props.children
-          ), 
-          backdrop
-        )
-      );
-    }
+      )
+    );
+  }
 });
 
 module.exports = Modal;
@@ -51529,34 +51467,48 @@ var Link = Router.Link;
 var toastr = require('toastr');
 var CourseActions = require('../../actions/courseActions');
 var CourseStore = require('../../stores/courseStore');
-var Modal = require('../common/modal.react');
+//var Modal = require('../common/modal.react');
+var Modal = require('../common/modal2.react');
 
 var CourseList = React.createClass({displayName: "CourseList",
   propTypes: {
     courses: React.PropTypes.array.isRequired
   },
 
-  _onChange: function(){
+  openModal: function(course, event) {
+    debugger;
+    event.preventDefault();
+    this.setState({ isModalOpen: true });
+  },
+
+  closeModal: function() {
+    this.setState({ isModalOpen: false });
+  },
+
+  _onChange: function () {
     this.setState({
       courses: CourseStore.getAllCourses()
     });
   },
 
-  componentWillMount: function(){
+  componentWillMount: function () {
     CourseStore.addChangeListener(this._onChange);
+    this.setState({
+      isModalOpen: false
+    });
   },
 
-  componentWillUnmount: function(){
+  componentWillUnmount: function () {
     CourseStore.removeChangeListener(this._onChange);
   },
 
-  deleteCourse: function(id, event){
+  deleteCourse: function (id, event) {
     event.preventDefault();
     CourseActions.deleteCourse(id);
     toastr.success('Course deleted.');
   },
 
-  watchCourse: function(course, event){
+  watchCourse: function (course, event) {
     //play course video
     event.preventDefault();
     console.log("To be implemented");
@@ -51566,9 +51518,8 @@ var CourseList = React.createClass({displayName: "CourseList",
     var createCourseRow = function (course) {
       return (
         React.createElement("tr", {key: course.id}, 
-          React.createElement("td", null, React.createElement("a", {href: "#", className: "btn btn-danger", onClick: this.deleteCourse.bind(this, course.id)}, "Delete")), 
-          React.createElement("button", {type: "button", class: "btn btn-primary", "data-toggle": "modal", "data-target": ".bs-example-modal-lg"}, "Large modal"), 
-          React.createElement("td", null, React.createElement("a", {href: "#", className: "btn btn-success", onClick: this.watchCourse.bind(this, course)}, "Watch")), 
+          React.createElement("td", null, React.createElement("a", {href: "#", className: "btn btn-danger", onClick: this.deleteCourse.bind(this, course.id) }, "Delete")), 
+          React.createElement("td", null, React.createElement("a", {href: "#", className: "btn btn-success", "data-toggle": "modal", "data-target": "#myModal"}, "Watch")), 
           React.createElement("td", null, React.createElement(Link, {to: "manageCourse", params: { id: course.id}}, course.title)), 
           React.createElement("td", null, course.author.name), 
           React.createElement("td", null, course.category), 
@@ -51591,6 +51542,9 @@ var CourseList = React.createClass({displayName: "CourseList",
           React.createElement("tbody", null, 
             this.props.courses.map(createCourseRow, this) 
           )
+        ), 
+        React.createElement("div", null, 
+          React.createElement(Modal, null)
         )
       )
     );
@@ -51599,7 +51553,7 @@ var CourseList = React.createClass({displayName: "CourseList",
 
 module.exports = CourseList;
 
-},{"../../actions/courseActions":205,"../../stores/courseStore":232,"../common/modal.react":219,"react":202,"react-router":33,"toastr":203}],223:[function(require,module,exports){
+},{"../../actions/courseActions":205,"../../stores/courseStore":232,"../common/modal2.react":219,"react":202,"react-router":33,"toastr":203}],223:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -51611,7 +51565,8 @@ var CourseList = require('./courseList.react');
 var CoursesPage = React.createClass({displayName: "CoursesPage",
   getInitialState: function(){
     return {
-       courses: CourseStore.getAllCourses()
+       courses: CourseStore.getAllCourses(),
+       isModalOpen: false
     };
   },
 

@@ -6,34 +6,48 @@ var Link = Router.Link;
 var toastr = require('toastr');
 var CourseActions = require('../../actions/courseActions');
 var CourseStore = require('../../stores/courseStore');
-var Modal = require('../common/modal.react');
+//var Modal = require('../common/modal.react');
+var Modal = require('../common/modal2.react');
 
 var CourseList = React.createClass({
   propTypes: {
     courses: React.PropTypes.array.isRequired
   },
 
-  _onChange: function(){
+  openModal: function(course, event) {
+    debugger;
+    event.preventDefault();
+    this.setState({ isModalOpen: true });
+  },
+
+  closeModal: function() {
+    this.setState({ isModalOpen: false });
+  },
+
+  _onChange: function () {
     this.setState({
       courses: CourseStore.getAllCourses()
     });
   },
 
-  componentWillMount: function(){
+  componentWillMount: function () {
     CourseStore.addChangeListener(this._onChange);
+    this.setState({
+      isModalOpen: false
+    });
   },
 
-  componentWillUnmount: function(){
+  componentWillUnmount: function () {
     CourseStore.removeChangeListener(this._onChange);
   },
 
-  deleteCourse: function(id, event){
+  deleteCourse: function (id, event) {
     event.preventDefault();
     CourseActions.deleteCourse(id);
     toastr.success('Course deleted.');
   },
 
-  watchCourse: function(course, event){
+  watchCourse: function (course, event) {
     //play course video
     event.preventDefault();
     console.log("To be implemented");
@@ -43,9 +57,8 @@ var CourseList = React.createClass({
     var createCourseRow = function (course) {
       return (
         <tr key={course.id}>
-          <td><a href="#" className="btn btn-danger" onClick={this.deleteCourse.bind(this, course.id)} >Delete</a></td>
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg">Large modal</button>
-          <td><a href="#" className="btn btn-success" onClick={this.watchCourse.bind(this, course)} >Watch</a></td>
+          <td><a href="#" className="btn btn-danger" onClick={this.deleteCourse.bind(this, course.id) } >Delete</a></td>
+          <td><a href="#" className="btn btn-success" data-toggle="modal" data-target="#myModal" >Watch</a></td>
           <td><Link to="manageCourse" params={{ id: course.id }}>{course.title}</Link></td>
           <td>{course.author.name}</td>
           <td>{course.category}</td>
@@ -69,6 +82,9 @@ var CourseList = React.createClass({
             {this.props.courses.map(createCourseRow, this) }
           </tbody>
         </table>
+        <div>
+          <Modal />
+        </div>
       </div>
     );
   }
