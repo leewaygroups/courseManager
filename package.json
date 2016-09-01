@@ -1,7 +1,7 @@
 {
-  "name": "demo_with_gulp",
+  "name": "react_flux_demo",
   "version": "1.0.0",
-  "description": "",
+  "description": "A basic course/author management app to demo react, flux, and some dev-ops automation with gulp",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
